@@ -137,12 +137,7 @@ namespace web_app.Areas.Identity.Pages.Account
                     if (result.Succeeded)
                     {
                         // added for configuring user in the first time to be admin and later on user
-                        if (_userManager.Users.Count() == 1)
-                        {
-                            await _userManager.AddToRoleAsync(user, "Admin");
-                            await _userManager.AddToRoleAsync(user, "User");
-                        }
-                        else
+                        if (_userManager.Users.Count() > 1 )
                         {
                             await _userManager.AddToRoleAsync(user, "User");
                         }

@@ -77,7 +77,7 @@ namespace web_app.Data
                     Email = "admin@example.com",
                     NormalizedEmail = "ADMIN@EXAMPLE.COM",
                     EmailConfirmed = true,
-                    PasswordHash = null,
+                    PasswordHash = "21232f297a57a5a743894a0e4a801fc3",
                     SecurityStamp = null,
                     ConcurrencyStamp = null,
                     PhoneNumber = null,
