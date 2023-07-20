@@ -66,7 +66,7 @@ namespace web_app.Data
                     ConcurrencyStamp = null
                 });
             // Add first user as Admin if it's the only user in IdentityUser table
-            var adminUserId = "admin-user-id";
+            /*var adminUserId = "admin-user-id";
             var adminRoleId = "2"; // Admin role Id
             builder.Entity<CustomUser>().HasData(
                 new CustomUser
@@ -77,7 +77,7 @@ namespace web_app.Data
                     Email = "admin@example.com",
                     NormalizedEmail = "ADMIN@EXAMPLE.COM",
                     EmailConfirmed = true,
-                    PasswordHash = "21232f297a57a5a743894a0e4a801fc3",
+                    PasswordHash = null,
                     SecurityStamp = null,
                     ConcurrencyStamp = null,
                     PhoneNumber = null,
@@ -99,7 +99,7 @@ namespace web_app.Data
                     RoleId = adminRoleId,
                     UserId = adminUserId
                 }
-            );
+            );*/
         }
 
     }

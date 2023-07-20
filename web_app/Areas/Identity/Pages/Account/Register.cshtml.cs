@@ -24,6 +24,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using web_app;
+using web_app.Data;
 using web_app.Models;
 
 namespace web_app.Areas.Identity.Pages.Account
@@ -37,13 +38,17 @@ namespace web_app.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<CustomUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly ApplicationDbContext _context;
+        private readonly IPortfolioRepository _portfolioRepository;
+        private object _unitOfWork;
 
         public RegisterModel(
             UserManager<CustomUser> userManager,
             IUserStore<CustomUser> userStore,
             SignInManager<CustomUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender, RoleManager<IdentityRole> roleManager)
+            IEmailSender emailSender, RoleManager<IdentityRole> roleManager,
+            IPortfolioRepository portfolioRepository, object unitOfWork)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -52,6 +57,8 @@ namespace web_app.Areas.Identity.Pages.Account
             _logger = logger;
             _emailSender = emailSender;
             _roleManager = roleManager;
+            _portfolioRepository = portfolioRepository;
+            _unitOfWork = unitOfWork;
         }
         [BindProperty]
         public bool IsAdmin { get; set; }
@@ -136,9 +143,30 @@ namespace web_app.Areas.Identity.Pages.Account
                     //var addRoleToUser = await _userManager.AddToRoleAsync(user, Input.Role);
                     if (result.Succeeded)
                     {
-                        // added for configuring user in the first time to be admin and later on user
-                        if (_userManager.Users.Count() > 1 )
+                        var portfolio = new Portfolio
                         {
+                            UserId = user.Id,
+                            Name = "Default Portfolio",
+                            Description = "Default portfolio for the user",
+                            InitialBalance = 100000, // Set the initial balance here if needed
+                            CurrentBalance = 100000,
+                            TotalProfit = 0,
+                            TotalProfitPercentage = 0,
+                            Quantity = 0
+                        };
+                        await _portfolioRepository.AddPortfolioAsync(portfolio);
+                        // await _unitOfWork.SaveChangesAsync();
+
+                        // added for configuring user in the first time to be admin and later on user
+                        if (_userManager.Users.Count() == 1 )
+                        {
+                            await _userManager.AddToRoleAsync(user, "Admin");
+                            await _userManager.AddToRoleAsync(user, "User");
+                        }
+                        else
+                        {
+                            _context.Portfolios.Add(portfolio);
+                            await _context.SaveChangesAsync();
                             await _userManager.AddToRoleAsync(user, "User");
                         }
 

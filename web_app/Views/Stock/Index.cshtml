@@ -1,0 +1,34 @@
+﻿@model List<web_app.Models.Stock>
+
+<div class="text-center">
+    <h1 class="display-4">Stocks</h1>
+</div>
+
+@if (Model != null && Model.Any())
+{
+    <div class="text-center">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Symbol</th>
+                <th scope="col">Name</th>
+                <th scope="col">Price</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var stock in Model)
+            {
+                <tr>
+                    <th scope="row">@stock.StockID</th>
+                    <td>@stock.Symbol</td>
+                    <td>@stock.Name</td>
+                    <td>@stock.Price</td>
+                    @*<td><a asp-controller="Transaction" asp-action="Order" asp-route-id="@stock.StockID">Buy</a></td>
+                    <td><a asp-controller="Transaction" asp-action="Order" asp-route-id="@stock.StockID">Sell</a></td>*@
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
