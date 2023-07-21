@@ -21,10 +21,10 @@ public class Transaction
     [Required]
     public double Price { get; set; }
 
-    // Navigation property to relate to the Stock model
+    // Navigation property to relate to the Stock model, it allows us to access the stock associated with a particular transaction
     public Stock Stock { get; set; }
 
-    // Navigation property to relate to the User model
+    // Navigation property to relate to the User model, it allows us to access the user associated with a particular transaction
     public CustomUser User { get; set; }
     [Key]
     public string Id { get; set; }

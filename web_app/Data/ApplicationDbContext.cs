@@ -23,21 +23,25 @@ namespace web_app.Data
             base.OnModelCreating(builder);
 
             // Define the relationships between entities
+            // transaction entity has composite primary key
+            // one transaction, multiple stocks
             builder.Entity<Transaction>()
                 .HasKey(t => new { t.Id, t.StockId });
 
             builder.Entity<Transaction>()
-                .HasOne(t => t.Stock)
-                .WithMany(s => s.Transactions)
-                .HasForeignKey(t => t.StockId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasOne(t => t.Stock) // Transaction entity has one Stock
+                .WithMany(s => s.Transactions) // Stock entity has many Transactions
+                .HasForeignKey(t => t.StockId) // Transaction entity has foreign key StockId
+                .OnDelete(DeleteBehavior.Restrict); // when a stock is deleted, its transactions are not deleted
 
+            // transaction entity has a one-to-many relationship with the portfolio entity
             builder.Entity<Transaction>()
-                .HasOne(t => t.User)
-                .WithMany(u => u.Transactions)
-                .HasForeignKey(t => t.Id)
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasOne(t => t.User) // transaction entity has one user
+                .WithMany(u => u.Transactions) // user entity has many transactions
+                .HasForeignKey(t => t.Id) // transaction entity has foreign key Id
+                .OnDelete(DeleteBehavior.Restrict); // when a user is deleted, their transactions are not deleted
 
+            // portfolio entity has primary key PortfolioId
             builder.Entity<Portfolio>()
                 .HasKey(p => p.PortfolioId);
 
@@ -45,10 +49,10 @@ namespace web_app.Data
             // a user can have many portfolios,
             // but a portfolio can only belong to one user
             builder.Entity<Portfolio>()
-                .HasOne(p => p.User)
-                .WithMany(m => m.Portfolios)
-                .HasForeignKey(p => p.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasOne(p => p.User) // portfolio entity has one user
+                .WithMany(m => m.Portfolios)// user entity has many portfolios
+                .HasForeignKey(p => p.UserId) // portfolio entity has foreign key UserId
+                .OnDelete(DeleteBehavior.Restrict); // when a user is deleted, their portfolios are not deleted
 
             builder.Entity<IdentityRole>().HasData(
                 new IdentityRole

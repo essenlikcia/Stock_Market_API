@@ -78,6 +78,9 @@ namespace web_app
                 builder.Services.AddScoped<IUserRepository, UserRepository>(); // Register UserRepository as the implementation for IUserRepository
                 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
                 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+                builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+                builder.Services.AddScoped<IPortfolioRepository, PortfolioRepository>();
+                builder.Services.AddScoped<IStockRepository, StockRepository>();
             }
         }
     }

@@ -21,7 +21,7 @@ namespace web_app.Data
             return await _context.Portfolios.ToListAsync();
         }
 
-        public async Task<Portfolio> GetPortfolioByIdAsync(int id)
+        public async Task<Portfolio> GetPortfolioByIdAsync(string id)
         {
             return await _context.Portfolios.FindAsync(id);
         }
@@ -38,7 +38,7 @@ namespace web_app.Data
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeletePortfolioAsync(int id)
+        public async Task DeletePortfolioAsync(string id)
         {
             var portfolio = await _context.Portfolios.FindAsync(id);
             if (portfolio != null)

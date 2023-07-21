@@ -8,9 +8,9 @@ namespace web_app.Data
     public interface IPortfolioRepository
     {
         Task<IEnumerable<Portfolio>> GetPortfoliosAsync();
-        Task<Portfolio> GetPortfolioByIdAsync(int id);
+        Task<Portfolio> GetPortfolioByIdAsync(string id);
         Task AddPortfolioAsync(Portfolio portfolio);
         Task UpdatePortfolioAsync(Portfolio portfolio);
-        Task DeletePortfolioAsync(int id);
+        Task DeletePortfolioAsync(string id);
     }
 }

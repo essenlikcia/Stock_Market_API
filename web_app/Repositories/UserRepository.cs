@@ -1,4 +1,5 @@
-﻿using web_app.Core.Repositories;
+﻿using Microsoft.EntityFrameworkCore;
+using web_app.Core.Repositories;
 using web_app.Data;
 using web_app.Models;
 

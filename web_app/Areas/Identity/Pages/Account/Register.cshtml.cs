@@ -24,6 +24,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using web_app;
+using web_app.Core.Repositories;
 using web_app.Data;
 using web_app.Models;
 
@@ -40,7 +41,8 @@ namespace web_app.Areas.Identity.Pages.Account
         private readonly IEmailSender _emailSender;
         private readonly ApplicationDbContext _context;
         private readonly IPortfolioRepository _portfolioRepository;
-        private object _unitOfWork;
+        private readonly IStockRepository _stockRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
         public RegisterModel(
             UserManager<CustomUser> userManager,
@@ -48,7 +50,8 @@ namespace web_app.Areas.Identity.Pages.Account
             SignInManager<CustomUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender, RoleManager<IdentityRole> roleManager,
-            IPortfolioRepository portfolioRepository, object unitOfWork)
+            IPortfolioRepository portfolioRepository,
+            IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -148,12 +151,13 @@ namespace web_app.Areas.Identity.Pages.Account
                             UserId = user.Id,
                             Name = "Default Portfolio",
                             Description = "Default portfolio for the user",
-                            InitialBalance = 100000, // Set the initial balance here if needed
-                            CurrentBalance = 100000,
+                            InitialBalance = 0, // Set the initial balance here if needed
+                            CurrentBalance = 0,
                             TotalProfit = 0,
                             TotalProfitPercentage = 0,
                             Quantity = 0
                         };
+
                         await _portfolioRepository.AddPortfolioAsync(portfolio);
                         // await _unitOfWork.SaveChangesAsync();
 
@@ -165,8 +169,6 @@ namespace web_app.Areas.Identity.Pages.Account
                         }
                         else
                         {
-                            _context.Portfolios.Add(portfolio);
-                            await _context.SaveChangesAsync();
                             await _userManager.AddToRoleAsync(user, "User");
                         }
 

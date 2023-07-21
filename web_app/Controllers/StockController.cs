@@ -50,7 +50,6 @@ namespace web_app.Controllers
             {
                 return NotFound();
             }
-
             return Ok(stock);
         }
 

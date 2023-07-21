@@ -8,6 +8,8 @@ using Serilog;
 using web_app.Core.Repositories;
 using web_app.Core.ViewModel;
 using web_app.Repositories;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace web_app.Controllers
 {
@@ -21,11 +23,13 @@ namespace web_app.Controllers
             _unitOfWork = unitOfWork;
             _signInManager = signInManager;
         }
+
         public IActionResult Index()
         {
             var users = _unitOfWork.User.GetUsers();
             return View(users);
         }
+
         public async Task<IActionResult> Edit(string id)
         {
             var user = _unitOfWork.User.GetUser(id);
@@ -42,11 +46,11 @@ namespace web_app.Controllers
                 roleItems.Add(new SelectListItem(role.Name, role.Id, hasRole));
             }*/
 
-            var roleItems = roles.Select(role => 
+            var roleItems = roles.Select(role =>
                 new SelectListItem(
                     role.Name,
-                    role.Id, 
-                    userRoles.Any(ur => ur.Contains(role.Name)))).ToList(); 
+                    role.Id,
+                    userRoles.Any(ur => ur.Contains(role.Name)))).ToList();
 
             var vm = new EditUserViewModel()
             {
@@ -116,5 +120,33 @@ namespace web_app.Controllers
             return RedirectToAction("Edit", new { id = user.Id });
         }
 
+
+        /* Admin Setting Balance for user and system */
+        [HttpPost]
+        public async Task<IActionResult> SetBalance(string userId, decimal newBalance)
+        {
+            var user = _unitOfWork.User.GetUser(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var portfolio = await _unitOfWork.PortfolioRepository.GetPortfolioByIdAsync(userId);
+            if (portfolio == null)
+            {
+                return NotFound("Portfolio not found for the user.");
+            }
+
+            portfolio.CurrentBalance = newBalance;
+            await _unitOfWork.PortfolioRepository.UpdatePortfolioAsync(portfolio);
+            await _unitOfWork.SaveChangesAsync();
+
+            return Ok("Balance updated successfully.");
+        }
+        /* JSON Request Body
+        {
+            "userId": "user-id",
+            "newBalance": 1500.00
+        }*/
     }
 }

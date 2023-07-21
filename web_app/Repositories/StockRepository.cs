@@ -22,7 +22,7 @@ namespace web_app.Data
             return await _context.Stocks.ToListAsync();
         }
 
-        public async Task<Stock> GetStockByIdAsync(int id)
+        public async Task<Stock> GetStockByIdAsync(string id)
         {
             return await _context.Stocks.FindAsync(id);
         }
@@ -39,7 +39,7 @@ namespace web_app.Data
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteStockAsync(int id)
+        public async Task DeleteStockAsync(string id)
         {
             var stock = await _context.Stocks.FindAsync(id);
             if (stock != null)

@@ -21,6 +21,7 @@ public class Stock
     public decimal PriceLow { get; set; }
     [Required]
     public decimal PriceHigh { get; set; }
+    // this is a navigation property that allows us to access the list of transactions associated with a particular stock
     public List<Transaction> Transactions { get; set; } = new ();
 
     public Stock()

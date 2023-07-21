@@ -8,9 +8,9 @@ namespace web_app.Data
     public interface IStockRepository
     {
         Task<IEnumerable<Stock>> GetStocksAsync();
-        Task<Stock> GetStockByIdAsync(int id);
+        Task<Stock> GetStockByIdAsync(string id);
         Task AddStockAsync(Stock stock);
         Task UpdateStockAsync(Stock stock);
-        Task DeleteStockAsync(int id);
+        Task DeleteStockAsync(string id);
     }
 }
