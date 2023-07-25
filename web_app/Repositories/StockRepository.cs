@@ -24,9 +24,14 @@ namespace web_app.Data
 
         public async Task<Stock> GetStockByIdAsync(string id)
         {
-            return await _context.Stocks.FindAsync(id);
+            return await _context.Stocks.FirstOrDefaultAsync(s => s.StockID.ToString() == id); ;
         }
 
+
+        public async Task<Stock> GetStockBySymbolAsync(string symbol)
+        {
+            return await _context.Stocks.FirstOrDefaultAsync(s => s.Symbol == symbol);
+        }
         public async Task AddStockAsync(Stock stock)
         {
             _context.Stocks.Add(stock);
@@ -39,9 +44,9 @@ namespace web_app.Data
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteStockAsync(string id)
+        public async Task DeleteStockByIdAsync(string id)
         {
-            var stock = await _context.Stocks.FindAsync(id);
+            var stock = await _context.Stocks.FirstOrDefaultAsync(s => s.StockID.ToString() == id);
             if (stock != null)
             {
                 _context.Stocks.Remove(stock);

@@ -23,7 +23,7 @@ public class TransactionRepository : ITransactionRepository
     // Retrieves a specific transaction by its ID from the database.
     public async Task<Transaction> GetTransactionByIdAsync(string id)
     {
-        return await _context.Transactions.FindAsync(id);
+        return await _context.Transactions.FirstOrDefaultAsync(t => t.Id == id);
     }
 
     // Adds a new transaction to the database.

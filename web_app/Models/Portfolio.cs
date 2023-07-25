@@ -27,7 +27,7 @@ public class Portfolio
     [Required]
     public decimal Quantity { get; set; }
     // navigation property, establishes a relationship between portfolio entity and user entity
-    public CustomUser User { get; set; }
+    public CustomUser? User { get; set; }
 
     public Portfolio()
     {

@@ -7,6 +7,10 @@ using web_app.Core.Repositories;
 using web_app.Data;
 using web_app.Models;
 using web_app.Repositories;
+using Hangfire;
+using Hangfire.SqlServer;
+using web_app.Controllers;
+
 
 namespace web_app
 {
@@ -15,11 +19,6 @@ namespace web_app
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
-            // Add services to the container.
-            AddScoped();
-
-
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
@@ -29,6 +28,9 @@ namespace web_app
                 .AddRoles<IdentityRole>() // added roles
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
+
+            // Add services to the container.
+            AddScoped();
 
             // logger
             var _logger = new LoggerConfiguration().WriteTo.File("C:\\Users\\Xavier\\Desktop\\Logs\\API_Log.log",
@@ -81,6 +83,7 @@ namespace web_app
                 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
                 builder.Services.AddScoped<IPortfolioRepository, PortfolioRepository>();
                 builder.Services.AddScoped<IStockRepository, StockRepository>();
+                builder.Services.AddHangfire(x => x.UseSqlServerStorage(connectionString));
             }
         }
     }

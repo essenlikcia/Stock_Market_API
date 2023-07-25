@@ -8,20 +8,115 @@ using web_app.Data;
 using web_app.Models;
 using System.Net.Http;
 using System.ComponentModel.Design;
+using AlphaVantage.Net.Core.Client;
+using AlphaVantage.Net.Stocks;
+using AlphaVantage.Net.Stocks.Client;
 
 namespace web_app.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     public class StockController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly AlphaVantageClient _alphaVantageClient;
 
-        public StockController(IUnitOfWork unitOfWork, IHttpClientFactory httpClientFactory)
+        private readonly TimeSpan _updateInterval = TimeSpan.FromHours(1); // Update stock data every hour
+        private Timer _timer;
+
+        public StockController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _httpClientFactory = httpClientFactory;
+            string apiKey = "UCTK723VT0KPF10W";
+            _alphaVantageClient = new AlphaVantageClient(apiKey);
+            _timer = new Timer(UpdateStockData, null, _updateInterval, _updateInterval);
+        }
+
+        public class StockSymbolsRequest
+        {
+            public List<string> Symbols { get; set; }
+        }
+
+        // POST: /api/Stock/GetStockData
+        // Retrieves stock data from AlphaVantage API for multiple symbols.
+        [HttpPost]
+        public async Task<IActionResult> GetStockData([FromBody]StockSymbolsRequest request)
+        {
+            try
+            {
+                var stockDataList = new List<Stock>();
+
+                // Use AlphaVantage client to fetch stock data for each symbol in the list
+                foreach (var symbol in request.Symbols)
+                {
+                    var stockData = await _alphaVantageClient.Stocks().GetGlobalQuoteAsync(symbol);
+                    if (stockData != null)
+                    {
+                        var stock = new Stock
+                        {
+                            Symbol = stockData.Symbol,
+                            Price = stockData.Price,
+                            PriceLow = stockData.LowestPrice,
+                            PriceHigh = stockData.HighestPrice,
+                            Volume = (int)stockData.Volume
+                        };
+                        stockDataList.Add(stock);
+                    }
+                }
+
+                // Save or update stock data in the database
+                foreach (var stockData in stockDataList)
+                {
+                    var existingStock = await _unitOfWork.StockRepository.GetStockBySymbolAsync(stockData.Symbol);
+
+                    if (existingStock != null)
+                    {
+                        // Update existing stock data
+                        existingStock.Price = stockData.Price;
+                        existingStock.PriceLow = stockData.PriceLow;
+                        existingStock.PriceHigh = stockData.PriceHigh;
+                        existingStock.Volume = stockData.Volume;
+
+                        await _unitOfWork.StockRepository.UpdateStockAsync(existingStock);
+                    }
+                    else
+                    {
+                        // Add new stock data
+                        await _unitOfWork.StockRepository.AddStockAsync(stockData);
+                    }
+                }
+                await _unitOfWork.SaveChangesAsync();
+                return Ok(stockDataList);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // Background task to update stock data at regular intervals
+        private async void UpdateStockData(object state)
+        {
+            try
+            {
+                // Fetch data for all stored symbols
+                var storedStocks = await _unitOfWork.StockRepository.GetStocksAsync();
+                var symbolsToUpdate = storedStocks.Select(s => s.Symbol).ToList();
+
+                // Create the StockSymbolsRequest object and set the Symbols property
+                var request = new StockSymbolsRequest
+                {
+                    Symbols = symbolsToUpdate
+                };
+
+                // Fetch and store updated data
+                await GetStockData(request);
+            }
+            catch (Exception ex)
+            {
+                // Log or handle any errors that occur during the background update
+                Console.WriteLine($"Error updating stock data: {ex.Message}");
+            }
         }
 
         // GET: /api/Stock
@@ -53,6 +148,7 @@ namespace web_app.Controllers
             return Ok(stock);
         }
 
+        /* doesn't work */
         // POST: /api/Stock
         // Adds a new stock to the database
         // AddStock is designed to return a generic IActionResult
@@ -72,20 +168,23 @@ namespace web_app.Controllers
             }
         }
 
+
+
         // PUT: /api/Stock/5
         // Updates an existing stock in the database.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateStock(int id, [FromBody] Stock stock)
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> UpdateStock([FromQuery]int id, [FromBody] Stock stock)
         {
             try
             {
+                stock.StockID = id;
                 if (id != stock.StockID)
                     return BadRequest("Invalid stock ID.");
 
                 await _unitOfWork.StockRepository.UpdateStockAsync(stock);
                 await _unitOfWork.SaveChangesAsync();
 
-                return NoContent();
+                return Created(nameof(UpdateStock), stock);
             }
             catch (Exception ex)
             {
@@ -96,47 +195,34 @@ namespace web_app.Controllers
         // DELETE: /api/Stock/5
         // Deletes a specific stock by its ID from the database.
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteStock(string id)
+        public async Task<IActionResult> DeleteStock([FromQuery]string id)
         {
-            try
+            // Get the portfolio by its ID asynchronously from the repository through the Unit of Work.
+            var stock = await _unitOfWork.StockRepository.GetStockByIdAsync(id);
+            if (stock == null)
             {
-                await _unitOfWork.StockRepository.DeleteStockAsync(id);
-                await _unitOfWork.SaveChangesAsync();
+                // If the portfolio is not found, return a NotFound response.
+                return NotFound();
+            }
 
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            // Delete the portfolio asynchronously from the repository through the Unit of Work.
+            await _unitOfWork.StockRepository.DeleteStockByIdAsync(id);
+            // Save the changes to the database asynchronously through the Unit of Work.
+            await _unitOfWork.SaveChangesAsync();
+
+            // Return a "204 No Content" status to indicate successful deletion without returning a response body.
+            return NoContent();
         }
-        /*
-        public async Task<IActionResult> Index()
+
+        // Dispose method is overridden to release resources when the controller is no longer needed.
+        protected override void Dispose(bool disposing)
         {
-            // Create an instance of HttpClient
-            using (var httpClient = new HttpClient())
-            {
-                try
-                {
-                    // Replace the URL with the actual API endpoint that provides stock data
-                    string apiUrl = "https://bigpara.hurriyet.com.tr/borsa/canli-borsa/";
+            // Dispose the _timer object if it's not null.
+            // The ? is the null-conditional operator, ensuring the Dispose method is only called if _timer is not null.
+            _timer?.Dispose();
 
-                    // Fetch the data from the API
-                    var response = await httpClient.GetAsync(apiUrl);
-                    response.EnsureSuccessStatusCode();
-                    var jsonString = await response.Content.ReadAsStringAsync();
-
-                    // Deserialize the JSON response into a list of Stock objects
-                    var stocks = JsonConvert.DeserializeObject<List<Stock>>(jsonString);
-
-                    return View(stocks);
-                }
-                catch (Exception ex)
-                {
-                    // Handle any errors here
-                    return View("Error");
-                }
-            }
-        }*/
+            // Call the base Dispose method to perform any cleanup tasks defined in the base Controller class.
+            base.Dispose(disposing);
+        }
     }
 }

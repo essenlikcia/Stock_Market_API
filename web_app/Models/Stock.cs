@@ -13,7 +13,7 @@ public class Stock
 
     [Required]
     [StringLength(50)]
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     [Required]
     public decimal Price { get; set; }
@@ -21,6 +21,8 @@ public class Stock
     public decimal PriceLow { get; set; }
     [Required]
     public decimal PriceHigh { get; set; }
+    [Required]
+    public int Volume { get; set; }
     // this is a navigation property that allows us to access the list of transactions associated with a particular stock
     public List<Transaction> Transactions { get; set; } = new ();
 
@@ -32,9 +34,10 @@ public class Stock
         Price = 0;
         PriceHigh = 0;
         PriceLow = 0;
+        Volume = 0;
     }
     
-    public Stock(int stockId, string symbol, string name, decimal price, decimal priceLow, decimal priceHigh)
+    public Stock(int stockId, string symbol, string name, decimal price, decimal priceLow, decimal priceHigh, string date, int volume)
     {
         StockID = stockId;
         Symbol = symbol;
@@ -42,5 +45,6 @@ public class Stock
         Price = price;
         PriceLow = priceLow;
         PriceHigh = priceHigh;
+        Volume = volume;
     }
 }

@@ -4,7 +4,7 @@ using web_app.Models;
 
 namespace web_app.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class TransactionController : Controller
     {
@@ -43,7 +43,7 @@ namespace web_app.Controllers
         // Adds a new transaction to the database
         // AddTransaction is designed to return the added Transaction
         [HttpPost]
-        public async Task<ActionResult<Transaction>> AddTransaction(Transaction transaction)
+        public async Task<IActionResult> AddTransaction([FromBody]Transaction transaction)
         {
             if (!ModelState.IsValid)
             {
@@ -53,15 +53,15 @@ namespace web_app.Controllers
             await _unitOfWork.TransactionRepository.AddTransactionAsync(transaction);
             await _unitOfWork.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetTransaction), new { id = transaction.Id }, transaction);
+            return Created(nameof(AddTransaction), transaction);
         }
 
 
         // PUT: /api/Transaction/5
         // Updates an existing transaction in the database.
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTransaction(string id, Transaction transaction)
-        {
+        public async Task<IActionResult> UpdateTransaction([FromQuery]string id, Transaction transaction)
+        {   
             if (id != transaction.Id)
             {
                 return BadRequest();
@@ -71,7 +71,7 @@ namespace web_app.Controllers
             await _unitOfWork.SaveChangesAsync();
 
             // Returns a "204 No Content" status to indicate successful update without returning a response body.
-            return NoContent();
+            return Created(nameof(UpdateTransaction), transaction);
         }
 
         // DELETE: /api/Transaction/5
@@ -83,7 +83,7 @@ namespace web_app.Controllers
             await _unitOfWork.SaveChangesAsync();
 
             // Returns a "204 No Content" status to indicate successful deletion without returning a response body.
-            return NoContent();
+            return Created(nameof(DeleteTransaction), id);
         }
     }
 }

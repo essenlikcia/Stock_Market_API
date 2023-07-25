@@ -41,6 +41,22 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "AlphaVantage.Net.Core": {
+              "target": "Package",
+              "version": "[2.0.2, )"
+            },
+            "AlphaVantage.Net.Stocks": {
+              "target": "Package",
+              "version": "[2.0.2, )"
+            },
+            "Hangfire": {
+              "target": "Package",
+              "version": "[1.8.3, )"
+            },
+            "Hangfire.SqlServer": {
+              "target": "Package",
+              "version": "[1.8.3, )"
+            },
             "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": {
               "target": "Package",
               "version": "[6.0.16, )"
@@ -63,6 +79,14 @@
               "target": "Package",
               "version": "[6.0.18, )"
             },
+            "Microsoft.Extensions.Hosting.Abstractions": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
+            "Microsoft.Extensions.Http": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
             "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
               "target": "Package",
               "version": "[6.0.14, )"
@@ -82,6 +106,10 @@
             "Serilog.Sinks.File": {
               "target": "Package",
               "version": "[5.0.0, )"
+            },
+            "StockSharp.AlphaVantage": {
+              "target": "Package",
+              "version": "[5.0.145, )"
             },
             "Yahoo.Finance": {
               "target": "Package",

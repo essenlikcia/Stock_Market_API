@@ -150,13 +150,6 @@ namespace web_app.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = "admin-user-id",
-                            RoleId = "2"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -258,25 +251,6 @@ namespace web_app.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "admin-user-id",
-                            AccessFailedCount = 0,
-                            Address = "admin-address",
-                            BirthDate = new DateTime(2023, 7, 18, 0, 0, 0, 0, DateTimeKind.Local),
-                            Email = "admin@example.com",
-                            EmailConfirmed = true,
-                            FullName = "admin",
-                            Gender = "male",
-                            LockoutEnabled = false,
-                            NormalizedEmail = "ADMIN@EXAMPLE.COM",
-                            NormalizedUserName = "ADMINUSER",
-                            PhoneNumberConfirmed = false,
-                            TwoFactorEnabled = false,
-                            UserName = "adminuser"
-                        });
                 });
 
             modelBuilder.Entity("web_app.Models.Portfolio", b =>
@@ -329,6 +303,10 @@ namespace web_app.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StockID"), 1L, 1);
 
+                    b.Property<string>("Date")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -347,6 +325,9 @@ namespace web_app.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("Volume")
+                        .HasColumnType("int");
 
                     b.HasKey("StockID");
 

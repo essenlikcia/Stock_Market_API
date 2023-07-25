@@ -123,7 +123,7 @@ namespace web_app.Controllers
 
         /* Admin Setting Balance for user and system */
         [HttpPost]
-        public async Task<IActionResult> SetBalance(string userId, decimal newBalance)
+        public async Task<IActionResult> SetBalance([FromBody]string userId, decimal newBalance)
         {
             var user = _unitOfWork.User.GetUser(userId);
             if (user == null)
@@ -134,7 +134,7 @@ namespace web_app.Controllers
             var portfolio = await _unitOfWork.PortfolioRepository.GetPortfolioByIdAsync(userId);
             if (portfolio == null)
             {
-                return NotFound("Portfolio not found for the user.");
+                return NotFound("Portfolio not found for the user."); 
             }
 
             portfolio.CurrentBalance = newBalance;

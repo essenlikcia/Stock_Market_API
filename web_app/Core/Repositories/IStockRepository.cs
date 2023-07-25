@@ -9,8 +9,9 @@ namespace web_app.Data
     {
         Task<IEnumerable<Stock>> GetStocksAsync();
         Task<Stock> GetStockByIdAsync(string id);
+        Task<Stock> GetStockBySymbolAsync(string symbol);
         Task AddStockAsync(Stock stock);
         Task UpdateStockAsync(Stock stock);
-        Task DeleteStockAsync(string id);
+        Task DeleteStockByIdAsync(string id);
     }
 }

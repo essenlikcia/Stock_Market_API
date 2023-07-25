@@ -23,7 +23,7 @@ namespace web_app.Data
 
         public async Task<Portfolio> GetPortfolioByIdAsync(string id)
         {
-            return await _context.Portfolios.FindAsync(id);
+            return await _context.Portfolios.FirstOrDefaultAsync(s=>s.PortfolioId.ToString() == id);
         }
 
         public async Task AddPortfolioAsync(Portfolio portfolio)
@@ -40,7 +40,7 @@ namespace web_app.Data
 
         public async Task DeletePortfolioAsync(string id)
         {
-            var portfolio = await _context.Portfolios.FindAsync(id);
+            var portfolio = await _context.Portfolios.FirstOrDefaultAsync(s => s.PortfolioId.ToString() == id);
             if (portfolio != null)
             {
                 _context.Portfolios.Remove(portfolio);

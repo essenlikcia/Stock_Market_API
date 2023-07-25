@@ -151,8 +151,8 @@ namespace web_app.Areas.Identity.Pages.Account
                             UserId = user.Id,
                             Name = "Default Portfolio",
                             Description = "Default portfolio for the user",
-                            InitialBalance = 0, // Set the initial balance here if needed
-                            CurrentBalance = 0,
+                            InitialBalance = 10000, // Set the initial balance here if needed
+                            CurrentBalance = 10000,
                             TotalProfit = 0,
                             TotalProfitPercentage = 0,
                             Quantity = 0
