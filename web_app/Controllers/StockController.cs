@@ -21,7 +21,7 @@ namespace web_app.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly AlphaVantageClient _alphaVantageClient;
 
-        private readonly TimeSpan _updateInterval = TimeSpan.FromHours(1); // Update stock data every hour
+        private readonly TimeSpan _updateInterval = TimeSpan.FromMinutes(1); // Update stock data every minute
         private Timer _timer;
 
         public StockController(IUnitOfWork unitOfWork)
@@ -58,6 +58,7 @@ namespace web_app.Controllers
                             Price = stockData.Price,
                             PriceLow = stockData.LowestPrice,
                             PriceHigh = stockData.HighestPrice,
+                            Date = DateTime.Now.ToString(),
                             Volume = (int)stockData.Volume
                         };
                         stockDataList.Add(stock);
@@ -75,6 +76,7 @@ namespace web_app.Controllers
                         existingStock.Price = stockData.Price;
                         existingStock.PriceLow = stockData.PriceLow;
                         existingStock.PriceHigh = stockData.PriceHigh;
+                        existingStock.Date = stockData.Date;
                         existingStock.Volume = stockData.Volume;
 
                         await _unitOfWork.StockRepository.UpdateStockAsync(existingStock);

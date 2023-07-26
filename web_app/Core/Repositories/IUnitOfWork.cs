@@ -18,6 +18,7 @@ namespace web_app.Core.Repositories
 
         // Represents a repository for Stock-related data access operations.
         IStockRepository StockRepository { get; }
+        IStockHistoryRepository StockHistoryRepository { get; }
 
         // Asynchronously saves changes made in the context to the database.
         Task<int> SaveChangesAsync();

@@ -15,6 +15,7 @@ namespace web_app.Data
 
         // seed stock, transaction and portfolio tables
         public DbSet<Stock> Stocks { get; set; }
+        public DbSet<StockHistory> StockHistories { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<Portfolio> Portfolios { get; set; }
 
@@ -53,6 +54,12 @@ namespace web_app.Data
                 .WithMany(m => m.Portfolios)// user entity has many portfolios
                 .HasForeignKey(p => p.UserId) // portfolio entity has foreign key UserId
                 .OnDelete(DeleteBehavior.Restrict); // when a user is deleted, their portfolios are not deleted
+            
+            builder.Entity<StockHistory>()
+                .HasOne(sh => sh.Stock) // StockHistory entity has one Stock
+                .WithMany(s => s.StockHistories) // Stock entity has many StockHistories
+                .HasForeignKey(sh => sh.StockId) // StockHistory entity has foreign key StockId
+                .OnDelete(DeleteBehavior.Cascade); // when a Stock is deleted, its StockHistories will also be deleted
 
             builder.Entity<IdentityRole>().HasData(
                 new IdentityRole
@@ -69,6 +76,7 @@ namespace web_app.Data
                     NormalizedName = "ADMIN",
                     ConcurrencyStamp = null
                 });
+
             // Add first user as Admin if it's the only user in IdentityUser table
             /*var adminUserId = "admin-user-id";
             var adminRoleId = "2"; // Admin role Id

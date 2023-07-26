@@ -22,9 +22,12 @@ public class Stock
     [Required]
     public decimal PriceHigh { get; set; }
     [Required]
+    public string Date { get; set; }
+    [Required]
     public int Volume { get; set; }
     // this is a navigation property that allows us to access the list of transactions associated with a particular stock
     public List<Transaction> Transactions { get; set; } = new ();
+    public ICollection<StockHistory> StockHistories { get; set; }
 
     public Stock()
     {
@@ -34,6 +37,7 @@ public class Stock
         Price = 0;
         PriceHigh = 0;
         PriceLow = 0;
+        Date = "";
         Volume = 0;
     }
     
@@ -45,6 +49,7 @@ public class Stock
         Price = price;
         PriceLow = priceLow;
         PriceHigh = priceHigh;
+        Date = date;
         Volume = volume;
     }
 }

@@ -83,6 +83,7 @@ namespace web_app
                 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
                 builder.Services.AddScoped<IPortfolioRepository, PortfolioRepository>();
                 builder.Services.AddScoped<IStockRepository, StockRepository>();
+                builder.Services.AddScoped<IStockHistoryRepository, StockHistoryRepository>();
                 builder.Services.AddHangfire(x => x.UseSqlServerStorage(connectionString));
             }
         }
