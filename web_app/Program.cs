@@ -85,6 +85,10 @@ namespace web_app
                 builder.Services.AddScoped<IStockRepository, StockRepository>();
                 builder.Services.AddScoped<IStockHistoryRepository, StockHistoryRepository>();
                 builder.Services.AddHangfire(x => x.UseSqlServerStorage(connectionString));
+                builder.Services.AddAuthorization(options =>
+                {
+                    options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
+                });
             }
         }
     }

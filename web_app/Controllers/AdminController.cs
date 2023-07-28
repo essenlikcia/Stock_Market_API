@@ -17,12 +17,39 @@ namespace web_app.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly SignInManager<CustomUser> _signInManager;
+        private readonly string _jwtSecretKey;
 
-        public AdminController(IUnitOfWork unitOfWork, SignInManager<CustomUser> signInManager)
+        public AdminController(IUnitOfWork unitOfWork, SignInManager<CustomUser> signInManager, string jwtSecretKey)
         {
             _unitOfWork = unitOfWork;
             _signInManager = signInManager;
+            _jwtSecretKey = jwtSecretKey;
         }
+
+        [HttpPost]
+        public async Task<IActionResult> GenerateAdminJwtToken(string userId)
+        {
+            var user = _unitOfWork.User.GetUser(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            // Check if the user is an admin
+            var isAdmin = await _signInManager.UserManager.IsInRoleAsync(user, "Admin");
+
+            if (!isAdmin)
+            {
+                return Unauthorized(); // Only admins can generate the token
+            }
+
+            // Generate the JWT token for admin user
+            var jwtToken = JwtHelper.GenerateJwtToken(userId, "Admin", _jwtSecretKey, 60);
+
+            // Return the token in the response, or use it as needed
+            return Ok(new { token = jwtToken });
+        }
+
 
         public IActionResult Index()
         {

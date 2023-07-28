@@ -11,6 +11,7 @@ using System.ComponentModel.Design;
 using AlphaVantage.Net.Core.Client;
 using AlphaVantage.Net.Stocks;
 using AlphaVantage.Net.Stocks.Client;
+using Microsoft.AspNetCore.Authorization;
 
 namespace web_app.Controllers
 {
@@ -118,6 +119,39 @@ namespace web_app.Controllers
             {
                 // Log or handle any errors that occur during the background update
                 Console.WriteLine($"Error updating stock data: {ex.Message}");
+            }
+        }
+        public class TradingStatusRequest
+        {
+            public string Symbol;
+            public bool IsTradingAllowed;
+        }
+
+        // POST: /api/Stock/SetTradingStatus
+        // Allows the Admin to set the trading status for specific stocks.
+        [HttpPost]
+        [Authorize(Policy = "AdminPolicy")]
+        public async Task<IActionResult> SetTradingStatus([FromBody] TradingStatusRequest request)
+        {
+            try
+            {
+                // Get the stock by its symbol asynchronously from the repository through the Unit of Work.
+                var stock = await _unitOfWork.StockRepository.GetStockBySymbolAsync(request.Symbol);
+                if (stock == null)
+                {
+                    return NotFound();
+                }
+
+                // Update the IsTradingAllowed property of the stock and save the changes.
+                stock.isTradingAllowed = request.IsTradingAllowed;
+                await _unitOfWork.StockRepository.UpdateStockAsync(stock);
+                await _unitOfWork.SaveChangesAsync();
+
+                return Ok($"Trading status for stock {stock.Symbol} has been set to {(request.IsTradingAllowed ? "Allowed" : "Stopped")}.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
 

@@ -12,6 +12,7 @@
     <PackageReference Include="AlphaVantage.Net.Stocks" Version="2.0.2" />
     <PackageReference Include="Hangfire" Version="1.8.3" />
     <PackageReference Include="Hangfire.SqlServer" Version="1.8.3" />
+    <PackageReference Include="JWT" Version="10.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.16" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.18" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.18" />
@@ -28,6 +29,7 @@
     <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     <PackageReference Include="StockSharp.AlphaVantage" Version="5.0.145" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.32.0" />
     <PackageReference Include="Yahoo.Finance" Version="4.3.0" />
   </ItemGroup>
 

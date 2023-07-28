@@ -9,6 +9,8 @@ using AlphaVantage.Net.Core.Client;
 using AlphaVantage.Net.Stocks;
 using AlphaVantage.Net.Stocks.Client;
 using Ecng.Common;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace web_app.Controllers
 {
@@ -48,8 +50,16 @@ namespace web_app.Controllers
                 foreach (var symbol in request.Symbols)
                 {
                     var stockData = await _alphaVantageClient.Stocks().GetGlobalQuoteAsync(symbol);
-                    if (stockData != null)
-                    {
+                    if (stockData != null)  
+                    {   
+                        var existingStock = await _unitOfWork.StockRepository.GetStockBySymbolAsync(symbol);
+                        if (existingStock == null)
+                        {
+                            var stock = new Stock();
+                            await _unitOfWork.StockRepository.AddStockAsync(stock);
+                            var addedStock = stock;
+                        }
+
                         var stockHistory = new StockHistory
                         {
                             Symbol = stockData.Symbol,
@@ -57,9 +67,19 @@ namespace web_app.Controllers
                             PriceLow = stockData.LowestPrice,
                             PriceHigh = stockData.HighestPrice,
                             Date = DateTime.Now.ToString(),
+                            StockId = existingStock.StockID,
                             Volume = (int)stockData.Volume
                         };
                         stockHistoryList.Add(stockHistory);
+                        
+                        await _unitOfWork.StockHistoryRepository.AddStockHistoriesAsync(stockHistoryList);
+                        await _unitOfWork.SaveChangesAsync();
+
+                        var options = new JsonSerializerOptions
+                        {
+                            ReferenceHandler = ReferenceHandler.Preserve
+                        };
+                        return Ok(JsonSerializer.Serialize(stockHistoryList, options));
                     }
                 }
 

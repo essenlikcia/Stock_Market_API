@@ -329,6 +329,9 @@ namespace web_app.Migrations
                     b.Property<int>("Volume")
                         .HasColumnType("int");
 
+                    b.Property<bool>("isTradingAllowed")
+                        .HasColumnType("bit");
+
                     b.HasKey("StockID");
 
                     b.ToTable("Stocks");

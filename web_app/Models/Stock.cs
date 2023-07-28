@@ -25,6 +25,7 @@ public class Stock
     public string Date { get; set; }
     [Required]
     public int Volume { get; set; }
+    public bool isTradingAllowed { get; set; } = true;
     // this is a navigation property that allows us to access the list of transactions associated with a particular stock
     public List<Transaction> Transactions { get; set; } = new ();
     public ICollection<StockHistory> StockHistories { get; set; }
