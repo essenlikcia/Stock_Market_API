@@ -332,3 +332,4 @@ C:\Users\Xavier\Desktop\web_app\web_app\bin\Debug\net6.0\StockSharp.Logging.dll
 C:\Users\Xavier\Desktop\web_app\web_app\bin\Debug\net6.0\StockSharp.Messages.dll
 C:\Users\Xavier\Desktop\web_app\web_app\bin\Debug\net6.0\JWT.dll
 C:\Users\Xavier\Desktop\web_app\web_app\bin\Debug\net6.0\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\Xavier\Desktop\web_app\web_app\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

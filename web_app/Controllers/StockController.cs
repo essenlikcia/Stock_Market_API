@@ -123,13 +123,14 @@ namespace web_app.Controllers
         }
         public class TradingStatusRequest
         {
-            public string Symbol;
-            public bool IsTradingAllowed;
+            public string Symbol { get; set; }
+            public bool IsTradingAllowed { get; set; }
         }
 
         // POST: /api/Stock/SetTradingStatus
         // Allows the Admin to set the trading status for specific stocks.
         [HttpPost]
+        //[Authorize(Roles = "Admin")]
         [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> SetTradingStatus([FromBody] TradingStatusRequest request)
         {

@@ -17,15 +17,15 @@ namespace web_app.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly SignInManager<CustomUser> _signInManager;
-        private readonly string _jwtSecretKey;
+        //private readonly string _jwtSecretKey;
 
-        public AdminController(IUnitOfWork unitOfWork, SignInManager<CustomUser> signInManager, string jwtSecretKey)
+        public AdminController(IUnitOfWork unitOfWork, SignInManager<CustomUser> signInManager) //, string jwtSecretKey
         {
             _unitOfWork = unitOfWork;
             _signInManager = signInManager;
-            _jwtSecretKey = jwtSecretKey;
+            //_jwtSecretKey = jwtSecretKey;
         }
-
+        /*
         [HttpPost]
         public async Task<IActionResult> GenerateAdminJwtToken(string userId)
         {
@@ -50,7 +50,7 @@ namespace web_app.Controllers
             return Ok(new { token = jwtToken });
         }
 
-
+        */
         public IActionResult Index()
         {
             var users = _unitOfWork.User.GetUsers();

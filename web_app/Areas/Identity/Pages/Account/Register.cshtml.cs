@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Policy;
@@ -23,6 +24,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using web_app;
 using web_app.Core.Repositories;
 using web_app.Data;
@@ -84,7 +86,6 @@ namespace web_app.Areas.Identity.Pages.Account
             [Required]
             [Display(Name = "Name and Surname")]
             public string FullName { get; set; }
-
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
@@ -111,16 +112,14 @@ namespace web_app.Areas.Identity.Pages.Account
             public string ConfirmPassword { get; set; }
         }
 
-        
         public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
-        public async Task<IActionResult> OnPostAsync(bool IsAdmin, string returnUrl = null) // string role
+        public async Task<IActionResult> OnPostAsync(bool isAdmin, string returnUrl = null) // string role
         {
-            Console.WriteLine("IsAdmin: " + IsAdmin);
             returnUrl ??= Url.Content("~/");
             // _roleManager.CreateAsync(new IdentityRole("User Registration")).Wait();
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
@@ -166,6 +165,32 @@ namespace web_app.Areas.Identity.Pages.Account
                         {
                             await _userManager.AddToRoleAsync(user, "Admin");
                             await _userManager.AddToRoleAsync(user, "User");
+                            /*bool isFirstUser = await _userManager.IsInRoleAsync(user, "Admin");
+                            if (isFirstUser)
+                            {
+                                // Generate JWT token
+                                var tokenHandler = new JwtSecurityTokenHandler();
+                                var key = Encoding.ASCII.GetBytes("super_secret_key_for_JWT_Authentication_Admin"); // same key from program.cs
+                                var tokenDescriptor = new SecurityTokenDescriptor
+                                {
+                                    Subject = new ClaimsIdentity(new Claim[]
+                                    {
+                                        new Claim(ClaimTypes.Name, user.UserName),
+                                        new Claim(ClaimTypes.Role, "Admin")
+                                    }),
+                                    Expires = DateTime.UtcNow.AddDays(7), // Token expiration time
+                                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                                };
+                                var token = tokenHandler.CreateToken(tokenDescriptor);
+                                var jwtToken = tokenHandler.WriteToken(token);
+
+                                // Return JSONResult along with the JWT token
+                                return new JsonResult(new
+                                {
+                                    Message = "Admin User created a new account with password.",
+                                    Token = jwtToken
+                                });
+                            }*/
                         }
                         else
                         {

@@ -7,6 +7,7 @@
     {
         var loggedInUser = await UserManager.GetUserAsync(User);
         var isAdmin = User.IsInRole("Admin") && User.IsInRole("User");
+        //var isAdmin = await UserManager.IsInRoleAsync(loggedInUser, "Admin");
 
         @if (loggedInUser != null)
         {
@@ -14,18 +15,9 @@
             <li class="nav-item">
                 <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello <bl>@loggedInUser.FullName</bl></a>
             </li>
-            @if (isAdmin)
-            {
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Role <bl>@rolesThatUserHas.Last()</bl></a>
-                </li>
-            }
-            else
-            {
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Role <bl>@rolesThatUserHas.FirstOrDefault()</bl></a>
-                </li>
-            }
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Role <b>@(isAdmin ? "Admin" : "User")</b></a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Gender <bl>@loggedInUser.Gender</bl></a>
             </li>
@@ -61,5 +53,5 @@
             <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
         </li>
     }
-    
+
 </ul>

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,11 @@ using web_app.Models;
 using web_app.Repositories;
 using Hangfire;
 using Hangfire.SqlServer;
+using Microsoft.IdentityModel.Tokens;
 using web_app.Controllers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 
 namespace web_app
@@ -33,9 +38,13 @@ namespace web_app
             AddScoped();
 
             // logger
-            var _logger = new LoggerConfiguration().WriteTo.File("C:\\Users\\Xavier\\Desktop\\Logs\\API_Log.log",
-                rollingInterval: RollingInterval.Day).CreateLogger();
-            builder.Logging.AddSerilog(_logger);
+            builder.Services.AddLogging(loggingBuilder =>
+            {
+                loggingBuilder.AddSerilog(new LoggerConfiguration()
+                    .WriteTo.File("C:\\Users\\Xavier\\Desktop\\Logs\\API_Log.log",
+                        rollingInterval: RollingInterval.Day)
+                    .CreateLogger());
+            });
 
             var app = builder.Build();
             
@@ -85,10 +94,28 @@ namespace web_app
                 builder.Services.AddScoped<IStockRepository, StockRepository>();
                 builder.Services.AddScoped<IStockHistoryRepository, StockHistoryRepository>();
                 builder.Services.AddHangfire(x => x.UseSqlServerStorage(connectionString));
+                /*var key = Encoding.ASCII.GetBytes("super_secret_key_for_JWT_Authentication_Admin"); // Replace with your actual secret key
+                builder.Services.AddAuthentication(x =>
+                {
+                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                }).AddJwtBearer(x =>
+                {
+                    x.RequireHttpsMetadata = false;
+                    x.SaveToken = true;
+                    x.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(key),
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    };
+                });
                 builder.Services.AddAuthorization(options =>
                 {
                     options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
                 });
+                */
             }
         }
     }
