@@ -16,8 +16,4 @@ namespace web_app.Models
         public List<Portfolio> Portfolios { get; set; } = new ();
         public List<Transaction> Transactions { get; set; } = new ();
     }
-
-    public class ApplicationRole : IdentityRole
-    {
-    }
 }

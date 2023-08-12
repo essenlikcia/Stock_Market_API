@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Configuration;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -15,6 +16,7 @@ using web_app.Controllers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 
 namespace web_app
@@ -84,6 +86,9 @@ namespace web_app
 
             app.Run();
 
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             void AddScoped()
             {
                 builder.Services.AddScoped<IUserRepository, UserRepository>(); // Register UserRepository as the implementation for IUserRepository
@@ -94,28 +99,40 @@ namespace web_app
                 builder.Services.AddScoped<IStockRepository, StockRepository>();
                 builder.Services.AddScoped<IStockHistoryRepository, StockHistoryRepository>();
                 builder.Services.AddHangfire(x => x.UseSqlServerStorage(connectionString));
-                /*var key = Encoding.ASCII.GetBytes("super_secret_key_for_JWT_Authentication_Admin"); // Replace with your actual secret key
-                builder.Services.AddAuthentication(x =>
-                {
-                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                }).AddJwtBearer(x =>
-                {
-                    x.RequireHttpsMetadata = false;
-                    x.SaveToken = true;
-                    x.TokenValidationParameters = new TokenValidationParameters
+
+                string jwtKey = "super_secret_key_for_JWT_Authentication_Admin";
+
+                builder.Services
+                    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                    //auth
+                    .AddCookie(opts =>
                     {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(key),
-                        ValidateIssuer = false,
-                        ValidateAudience = false
-                    };
-                });
-                builder.Services.AddAuthorization(options =>
+                        opts.Cookie.Name = $".web_app.auth";
+                        opts.AccessDeniedPath = "/Home/AccessDenied";
+                        opts.LoginPath = "/Home/Login";
+                        opts.SlidingExpiration = true;
+                    })
+                    //jwt auth
+                    .AddJwtBearer(options =>
+                    {
+                        options.RequireHttpsMetadata = false;
+                        options.SaveToken = true;
+                        options.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidateIssuer = false,
+                            ValidateAudience = false,
+                            ValidateLifetime = true,
+                            ValidateIssuerSigningKey = true,
+                            IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(jwtKey)),
+                            ClockSkew = TimeSpan.FromSeconds(5)
+                        };
+                    });
+                builder.Services.AddSession(options =>
                 {
-                    options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
+                    options.Cookie.Name = $"web_app.session";
+                    options.IdleTimeout = TimeSpan.FromMinutes(180);
+                    options.Cookie.IsEssential = true;
                 });
-                */
             }
         }
     }

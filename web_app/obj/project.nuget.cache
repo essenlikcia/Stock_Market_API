@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "6URrzFgpd6SdfrcKhZFDrwnobP0rNyCLO0ZhAXqoRMbNjmduzn/Nvc9f4ylplYgQlSkgwmmwgjh0etHd76JVxg==",
+  "dgSpecHash": "eGn3n4xNYLUHxO/g0+hLO8MVC7QmG+52AG/YbrdsbgSuMzNjNJpWAgbVAoL5Ar1TO1gVmRnPs7sC2ePWibcUAg==",
   "success": true,
   "projectFilePath": "C:\\Users\\Xavier\\Desktop\\web_app\\web_app\\web_app.csproj",
   "expectedPackageFiles": [
@@ -116,7 +116,7 @@
     "C:\\Users\\Xavier\\.nuget\\packages\\microsoft.extensions.caching.abstractions\\6.0.0\\microsoft.extensions.caching.abstractions.6.0.0.nupkg.sha512",
     "C:\\Users\\Xavier\\.nuget\\packages\\microsoft.extensions.caching.memory\\6.0.1\\microsoft.extensions.caching.memory.6.0.1.nupkg.sha512",
     "C:\\Users\\Xavier\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\7.0.0\\microsoft.extensions.configuration.abstractions.7.0.0.nupkg.sha512",
-    "C:\\Users\\Xavier\\.nuget\\packages\\microsoft.extensions.configuration.binder\\7.0.0\\microsoft.extensions.configuration.binder.7.0.0.nupkg.sha512",
+    "C:\\Users\\Xavier\\.nuget\\packages\\microsoft.extensions.configuration.binder\\7.0.4\\microsoft.extensions.configuration.binder.7.0.4.nupkg.sha512",
     "C:\\Users\\Xavier\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\7.0.0\\microsoft.extensions.dependencyinjection.7.0.0.nupkg.sha512",
     "C:\\Users\\Xavier\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\7.0.0\\microsoft.extensions.dependencyinjection.abstractions.7.0.0.nupkg.sha512",
     "C:\\Users\\Xavier\\.nuget\\packages\\microsoft.extensions.dependencymodel\\7.0.0\\microsoft.extensions.dependencymodel.7.0.0.nupkg.sha512",

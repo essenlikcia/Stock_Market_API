@@ -12,6 +12,7 @@ using AlphaVantage.Net.Core.Client;
 using AlphaVantage.Net.Stocks;
 using AlphaVantage.Net.Stocks.Client;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace web_app.Controllers
 {
@@ -28,6 +29,7 @@ namespace web_app.Controllers
         public StockController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
+
             string apiKey = "UCTK723VT0KPF10W";
             _alphaVantageClient = new AlphaVantageClient(apiKey);
             _timer = new Timer(UpdateStockData, null, _updateInterval, _updateInterval);
@@ -130,8 +132,8 @@ namespace web_app.Controllers
         // POST: /api/Stock/SetTradingStatus
         // Allows the Admin to set the trading status for specific stocks.
         [HttpPost]
-        //[Authorize(Roles = "Admin")]
-        [Authorize(Policy = "AdminPolicy")]
+        [Authorize(Roles = "Admin")]
+        //[Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> SetTradingStatus([FromBody] TradingStatusRequest request)
         {
             try
